@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:weightSum="1">
+    android:weightSum="1"
+    >
 
     <ScrollView
         android:layout_width="match_parent"
@@ -15,6 +16,13 @@
             android:layout_height="wrap_content"
             android:orientation="vertical" >
 
+            <TextView
+                android:id="@+id/textViewDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.30"
+                android:text="TextView" />
+
             <com.prolificinteractive.materialcalendarview.MaterialCalendarView
                 android:id="@+id/calendarView"
                 android:layout_width="match_parent"
@@ -23,33 +31,94 @@
                 app:mcv_selectionColor="#7AE7FF"
                 app:mcv_showOtherDates="all" />
 
-            <LinearLayout
+
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:padding="16dp"
+                tools:context="com.blogspot.android_er.androiddynamicview.MainActivity">
 
-                <CheckBox
-                    android:id="@+id/checkBox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
 
-                <EditText
-                    android:id="@+id/activityTitle"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:contentDescription="Set activity title"
-                    android:ems="10"
-                    android:inputType="textPersonName" />
+                    android:layout_height="match_parent"
+                    android:layout_weight="1.59"
+                    android:orientation="vertical"
+                    android:background="#aae"
+                    >
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <Button
+                            android:id="@+id/add"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:text="Add" />
+
+                        <AutoCompleteTextView
+                            android:id="@+id/textin"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentLeft="true"
+                            android:layout_toLeftOf="@id/add" />
+                    </RelativeLayout>
+
+                    <LinearLayout
+                        android:id="@+id/container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"></LinearLayout>
+
+
+                </LinearLayout>
+
+
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:visibility="invisible">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:autoLink="web"
+                        android:text="http://android-er.blogspot.com/"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/relist"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:background="#E0E0E0"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/info"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:background="#D0D0D0"
+                        android:gravity="bottom"
+                        android:textStyle="italic" />
+
+                </LinearLayout>
             </LinearLayout>
 
-            <Button
-                android:id="@+id/addActivityButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:onClick="OnButtonClick"
-                android:text="Add Activity" />
 
         </LinearLayout>
+
+
+
     </ScrollView>
 
 
