@@ -4,12 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="#E1F6FF"
+    android:visibility="gone"
     >
 
         <AutoCompleteTextView
             android:id="@+id/textout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/textdate"
             />
 
         <Button
@@ -39,15 +41,14 @@
             android:layout_below="@+id/textout"
             android:layout_toEndOf="@+id/edit" />
 
-    <AutoCompleteTextView
+    <TextView
         android:id="@+id/textdate"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textout"
-        android:layout_marginStart="14dp"
-        android:layout_marginTop="14dp"
-        android:layout_toEndOf="@+id/remove"
-        android:text="start" />
-
+        android:background="@color/colorAccent"
+        android:text=" "
+        android:textColor="#FFF"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>

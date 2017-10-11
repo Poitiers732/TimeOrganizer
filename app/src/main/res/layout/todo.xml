@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:weightSum="1"
+    android:background="@color/colorBackground"
     >
+
 
     <ScrollView
         android:layout_width="match_parent"
@@ -16,21 +19,43 @@
             android:layout_height="wrap_content"
             android:orientation="vertical" >
 
-            <TextView
-                android:id="@+id/textViewDate"
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.30"
-                android:text="TextView" />
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:paddingTop="5dp"
+                >
+
+                <TextView
+                    android:id="@+id/textViewDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:onClick="showCalendar"
+                    android:padding="5dp"
+                    android:text="TextView"
+                    android:textSize="30dp" />
+
+                <Button
+                android:id="@+id/setToday"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:onClick="setTodayDate"
+                android:text="Today" />
+
+            </LinearLayout>
 
             <com.prolificinteractive.materialcalendarview.MaterialCalendarView
                 android:id="@+id/calendarView"
                 android:layout_width="match_parent"
-                android:layout_height="198dp"
-                android:layout_weight="0.30"
+                android:layout_height="200dp"
                 app:mcv_selectionColor="#7AE7FF"
-                app:mcv_showOtherDates="all" />
-
+                app:mcv_showOtherDates="all"
+                android:visibility="visible"
+                />
 
             <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
@@ -40,25 +65,27 @@
                 android:padding="16dp"
                 tools:context="com.blogspot.android_er.androiddynamicview.MainActivity">
 
-
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1.59"
+                    android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:background="#aae"
                     >
 
                     <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        >
 
                         <Button
                             android:id="@+id/add"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
-                            android:text="Add" />
+                            android:text="Add"
+                            android:onClick="onClickAddTask"
+                            />
+
 
                         <AutoCompleteTextView
                             android:id="@+id/textin"
@@ -69,13 +96,32 @@
                     </RelativeLayout>
 
                     <LinearLayout
+                        android:id="@+id/barBelowAdd"
+                        android:layout_width="match_parent"
+                        android:layout_height="12dp"
+                        android:orientation="vertical"
+                        android:background="@color/colorBackground"
+                        >
+
+
+                    </LinearLayout>
+
+                    <LinearLayout
                         android:id="@+id/container"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"></LinearLayout>
+                        android:orientation="vertical"
+                        ></LinearLayout>
 
+                    <Button
+                        android:id="@+id/showAllTasks"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="SHOW ALL TASKS"
+                        />
 
                 </LinearLayout>
+
 
 
 
@@ -109,17 +155,25 @@
                         android:layout_weight="1"
                         android:background="#D0D0D0"
                         android:gravity="bottom"
-                        android:textStyle="italic" />
+                        android:textStyle="italic"
+                        android:visibility="gone"
+                        />
+
 
                 </LinearLayout>
             </LinearLayout>
 
+
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:id="@+id/listViewTasks"
+                />
 
         </LinearLayout>
 
 
 
     </ScrollView>
-
 
 </LinearLayout>

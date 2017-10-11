@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/listItem"
+    >
+
+
+    <TextView
+        android:id="@+id/taskTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="TextView"
+        />
+
+    <TextView
+        android:id="@+id/itemNumberTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:layout_alignBaseline="@+id/taskTextView"
+        android:layout_alignBottom="@+id/taskTextView"
+        android:layout_toEndOf="@+id/taskTextView"
+        android:visibility="gone"
+        />
+
+    <TextView
+        android:id="@+id/dateTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:layout_alignBaseline="@+id/taskTextView"
+        android:layout_alignBottom="@+id/taskTextView"
+        android:layout_toEndOf="@+id/taskTextView"
+        />
+
+    <Button
+        android:id="@+id/buttonEdit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Edit"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/taskTextView"
+        android:visibility="gone"
+        />
+
+
+    <Button
+        android:id="@+id/buttonRemove"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="remove"
+        android:layout_below="@+id/taskTextView"
+        android:layout_toEndOf="@+id/buttonEdit"
+        android:visibility="gone"
+        />
+
+    <Button
+        android:id="@+id/buttonEditDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Date"
+        android:layout_below="@+id/taskTextView"
+        android:layout_toEndOf="@+id/buttonRemove"
+        android:visibility="gone"
+
+        />
+
+
+
+
+</RelativeLayout>
