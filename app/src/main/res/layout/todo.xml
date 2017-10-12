@@ -92,7 +92,10 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_alignParentLeft="true"
-                            android:layout_toLeftOf="@id/add" />
+                            android:layout_toLeftOf="@id/add"
+                            android:imeOptions="actionDone"
+
+                            />
                     </RelativeLayout>
 
                     <LinearLayout
@@ -117,7 +120,7 @@
                         android:id="@+id/showAllTasks"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="SHOW ALL TASKS"
+                        android:text="Show all tasks"
                         />
 
                 </LinearLayout>
@@ -176,4 +179,94 @@
 
     </ScrollView>
 
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="220dp"
+        android:id="@+id/relativeLayoutBottom"
+        >
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/linearLayoutBottom"
+                android:orientation="vertical"
+                >
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:id="@+id/editTextWithButton"
+                    android:visibility="gone"
+                    >
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/renameTaskButton"
+                        android:text="Rename"
+                        android:layout_alignParentRight="true"
+                        />
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/editTextView"
+                        android:layout_alignParentLeft="true"
+                        android:layout_toLeftOf="@id/renameTaskButton"
+
+                        />
+
+
+
+                </RelativeLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom|center"
+                            android:orientation="horizontal"
+                            android:id="@+id/bottomButtons"
+                            >
+
+
+                            <Button
+                                android:id="@+id/buttonEdit"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Edit" />
+
+
+                            <Button
+                                android:id="@+id/buttonRemove"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="remove"
+                                />
+
+                            <Button
+                                android:id="@+id/buttonEditDate"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Date"
+                                />
+
+                                <Button
+                                    android:id="@+id/buttonHide"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="hide"
+                                    />
+
+                        </LinearLayout>
+
+
+            </LinearLayout>
+    </RelativeLayout>
 </LinearLayout>
+
+
+

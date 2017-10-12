@@ -1,26 +1,20 @@
 package com.example.wojtek.timeorganizer;
 
-import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
-import android.database.MatrixCursor;
-import android.database.MergeCursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
 import android.text.TextUtils;
-import android.text.format.Time;
 import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -33,26 +27,12 @@ import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 import com.prolificinteractive.materialcalendarview.OnMonthChangedListener;
 
-import org.w3c.dom.Text;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
-import static com.example.wojtek.timeorganizer.R.id.calendarView;
-import static com.example.wojtek.timeorganizer.R.id.list_item;
-import static com.example.wojtek.timeorganizer.R.id.match_parent;
-import static com.example.wojtek.timeorganizer.R.id.taskTextView;
-import static com.example.wojtek.timeorganizer.R.id.text;
-import static com.example.wojtek.timeorganizer.R.id.wrap_content;
-import static com.example.wojtek.timeorganizer.R.string.calendar;
 
 
 /**
@@ -77,6 +57,8 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
     Button buttonAdd, setToday, showAllTasks;
     LinearLayout container;
     TextView reList, info;
+    RelativeLayout relativeLayoutBottom;
+    RelativeLayout editTextWithButton;
 
     TextView taskTextView;
     TextView itemNumberTextView;
@@ -85,6 +67,19 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
     Button buttonEdit;
     Button buttonRemove;
     Button buttonEditDate;
+    Button buttonHide;
+    Button renameTaskButton;
+
+    EditText editTextView;
+
+    Boolean allTasksPopulated = false;
+
+    String taskNameSuggestion = new String();
+
+    long longid = 0;
+
+    RelativeLayout buttons_layout;
+    LinearLayout bottomButtons;
 
     ListView listViewTasks;
     private ArrayAdapter<String> listAdapter ;
@@ -123,6 +118,9 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
         textIn = (AutoCompleteTextView)findViewById(R.id.textin);
         textIn.setAdapter(adapter);
 
+        relativeLayoutBottom = (RelativeLayout)findViewById(R.id.relativeLayoutBottom);
+        editTextWithButton = (RelativeLayout)findViewById(R.id.editTextWithButton);
+
         /*
         textDate = (AutoCompleteTextView)findViewById(R.id.textin);
         textDate.setAdapter(adapter2);
@@ -137,6 +135,7 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
         info.setMovementMethod(new ScrollingMovementMethod());
         textViewDate = (TextView)findViewById(R.id.textViewDate) ;
         textViewDate.setText(getSelectedDatesString());
+        editTextView = (EditText)findViewById(R.id.editTextView);
 
         taskTextView = (TextView)findViewById(R.id.taskTextView);
         itemNumberTextView = (TextView)findViewById(R.id.itemNumberTextView);
@@ -145,13 +144,43 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
         buttonEdit = (Button)findViewById(R.id.buttonEdit);
         buttonRemove = (Button)findViewById(R.id.buttonRemove);
         buttonEditDate = (Button)findViewById(R.id.buttonEditDate);
+        buttonHide = (Button) findViewById(R.id.buttonHide);
+        renameTaskButton = (Button)findViewById(R.id.renameTaskButton);
+
+
+
 
         showAllTasks = (Button)findViewById(R.id.showAllTasks);
 
+        bottomButtons = (LinearLayout)findViewById(R.id.bottomButtons);
+
         openDB();
-        populateList();
+        populateFromDay();
 
         listViewItemClick();
+
+        renameTaskButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+
+                Cursor cursor = myDB.getRow(longid);
+                if (cursor.moveToFirst()){
+                    String task = editTextView.getText().toString();
+                    myDB.updateRow(longid, task, textViewDate.getText().toString());
+                }
+
+                cursor.close();
+
+                if(showAllTasks.getText().toString().equals("Show all tasks")) {
+                    populateFromDay();
+                }
+                else {
+                    populateList();
+                }
+
+                relativeLayoutBottom.setVisibility(View.GONE);
+            }
+        });
 
 
 
@@ -160,7 +189,9 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
         public void onClick(View v) {
 
             onClickAddTask(v);
-            populateList();
+            populateFromDay();
+            allTasksPopulated = false;
+            showAllTasks.setText("Show all tasks");
 
         }
     });
@@ -170,10 +201,70 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
             @Override
             public void onClick(View v) {
 
-                populateList();
+                if(showAllTasks.getText().toString().equals("Show all tasks")) {
+                    populateList();
+                    showAllTasks.setText("Show daily tasks");
+                    allTasksPopulated = true;
+                }
+                else {
+                    populateFromDay();
+                    showAllTasks.setText("Show all tasks");
+                    allTasksPopulated = false;
+                }
 
             }
         });
+
+
+        //buttons litseners
+
+                    buttonEdit.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+                            editTextWithButton.setVisibility(View.VISIBLE);
+
+
+
+                           editTextView.setText( taskNameSuggestion );
+
+
+                        }
+                    });
+
+                    buttonRemove.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Toast.makeText(getBaseContext(),"Edit",Toast.LENGTH_SHORT).show();
+
+                            myDB.deleteRow(longid);
+
+                            if(allTasksPopulated) {
+                                populateList();
+                                showAllTasks.setText("Show daily tasks");
+                            }
+                            else {
+                                populateFromDay();
+                                showAllTasks.setText("Show all tasks");
+                            }
+
+                        }
+                    });
+
+                    buttonEditDate.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Toast.makeText(getBaseContext(),"Edit",Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                    buttonHide.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            relativeLayoutBottom.setVisibility(View.GONE);
+
+                        }
+                    });
 
 }
 
@@ -182,6 +273,7 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
         textViewDate.setText(getSelectedDatesString());
 
         populateFromDay();
+        showAllTasks.setText("Show all tasks");
     }
 
     public void populateFromDay(){
@@ -241,12 +333,13 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
         if(!TextUtils.isEmpty(textIn.getText().toString())){
             myDB.insertRow(textIn.getText().toString(),textViewDate.getText().toString());
         }
-        populateList();
+       // populateList();
 
     }
 
 
     private void populateList(){
+
         Cursor cursor = myDB.getAllRows();
         String[] fromFieldNames = new String[] {DBAdapter.KEY_ROWID,DBAdapter.KEY_TASK,DBAdapter.KEY_DATE};
         int[] toViewIDs = new int[] {R.id.itemNumberTextView,R.id.taskTextView,R.id.dateTextView};
@@ -266,22 +359,6 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
         myDB.close();
     }
 
-    private void showButtons(long id){
-
-        Button buttonEdit=(Button) findViewById(R.id.buttonEdit);
-        buttonEdit.setVisibility(View.VISIBLE);
-        Button buttonEditDate=(Button) findViewById(R.id.buttonEditDate);
-        buttonEditDate.setVisibility(View.VISIBLE);
-        Button buttonRemove=(Button) findViewById(R.id.buttonRemove);
-        buttonRemove.setVisibility(View.VISIBLE);
-
-        buttonEdit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(getBaseContext(),"Button clicked",Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
 
     private void updateTask(long id){
         Cursor cursor = myDB.getRow(id);
@@ -298,23 +375,56 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
 
     private void listViewItemClick(){
         final ListView myList = (ListView) findViewById(R.id.listViewTasks);
+
         myList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
                                     long id) {
                 // TODO Auto-generated method stub
-               // setTextViewEditable(myList);
 
-                showButtons(id);
+                taskNameSuggestion = myDB.getRow(id).getString(1);
 
-               // updateTask(id);
-               // populateList();
+                relativeLayoutBottom.setVisibility(View.VISIBLE);
+                editTextWithButton.setVisibility(View.GONE);
+
+                longid = id;
+
+                arg1.setBackgroundColor(Color.GREEN);
+
+
+                if(bottomButtons.getVisibility()==View.GONE){
+
+                    bottomButtons.setVisibility(View.VISIBLE);
+
+                }
+                else{
+                   // bottomButtons.setVisibility(View.GONE);
+                }
             }
         });
     }
 
+    private void showButtons(View lastTouchedView, long id){
 
 
+        Button buttonEdit = (Button) findViewById(R.id.buttonEdit);
+        Button buttonEditDate = (Button) findViewById(R.id.buttonEditDate);
+        Button buttonRemove = (Button) findViewById(R.id.buttonRemove);
+
+
+        if(buttonEdit.getVisibility()==View.GONE){
+            buttonEdit.setVisibility(View.VISIBLE);
+            buttonEditDate.setVisibility(View.VISIBLE);
+            buttonRemove.setVisibility(View.VISIBLE);
+        }
+        else{
+            buttonEdit.setVisibility(View.GONE);
+            buttonEditDate.setVisibility(View.GONE);
+            buttonRemove.setVisibility(View.GONE);
+        }
+
+
+    }
 }
 
