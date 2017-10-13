@@ -58,10 +58,11 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
     LinearLayout container;
     TextView reList, info;
     RelativeLayout relativeLayoutBottom;
-    RelativeLayout editTextWithButton;
+    LinearLayout editTextWithButton;
 
     TextView taskTextView;
     TextView itemNumberTextView;
+    TextView isdoneTextView;
     TextView dateTextView;
 
     Button buttonEdit;
@@ -69,6 +70,7 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
     Button buttonEditDate;
     Button buttonHide;
     Button renameTaskButton;
+    Button cancelRenameTaskButton;
 
     EditText editTextView;
 
@@ -121,7 +123,8 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
         textIn.setAdapter(adapter);
 
         relativeLayoutBottom = (RelativeLayout)findViewById(R.id.relativeLayoutBottom);
-        editTextWithButton = (RelativeLayout)findViewById(R.id.editTextWithButton);
+        editTextWithButton = (LinearLayout)findViewById(R.id.editTextWithButton);
+
 
         /*
         textDate = (AutoCompleteTextView)findViewById(R.id.textin);
@@ -141,6 +144,7 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
 
         taskTextView = (TextView)findViewById(R.id.taskTextView);
         itemNumberTextView = (TextView)findViewById(R.id.itemNumberTextView);
+        isdoneTextView = (TextView)findViewById(R.id.isdoneTextView);
         dateTextView = (TextView)findViewById(R.id.dateTextView);
 
         buttonEdit = (Button)findViewById(R.id.buttonEdit);
@@ -148,6 +152,7 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
         buttonEditDate = (Button)findViewById(R.id.buttonEditDate);
         buttonHide = (Button) findViewById(R.id.buttonHide);
         renameTaskButton = (Button)findViewById(R.id.renameTaskButton);
+        cancelRenameTaskButton = (Button)findViewById(R.id.cancelRenameTaskButton);
 
 
 
@@ -161,6 +166,17 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
 
         listViewItemClick();
 
+        cancelRenameTaskButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+
+                editTextView.setVisibility(View.GONE);
+                editTextWithButton.setVisibility(View.GONE);
+                bottomButtons.setVisibility(View.VISIBLE);
+
+            }
+        });
+
         renameTaskButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -168,7 +184,7 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
                 Cursor cursor = myDB.getRow(longid);
                 if (cursor.moveToFirst()){
                     String task = editTextView.getText().toString();
-                    myDB.updateRow(longid, task, textViewDate.getText().toString());
+                    myDB.updateRow(longid, task, textViewDate.getText().toString(),"not_done");
                 }
 
                 cursor.close();
@@ -181,10 +197,9 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
                 }
 
                 relativeLayoutBottom.setVisibility(View.GONE);
+                editTextView.setVisibility(View.GONE);
             }
         });
-
-
 
     buttonAdd.setOnClickListener(new View.OnClickListener(){
         @Override
@@ -194,10 +209,10 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
             populateFromDay();
             allTasksPopulated = false;
             showAllTasks.setText("Show all tasks");
-
+            textIn.setText("");
+            textIn.clearFocus();
         }
     });
-
 
         showAllTasks.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -217,18 +232,15 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
             }
         });
 
-
-        //buttons litseners
-
                     buttonEdit.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
 
                             editTextWithButton.setVisibility(View.VISIBLE);
-
-
+                            editTextView.setVisibility(View.VISIBLE);
 
                            editTextView.setText( taskNameSuggestion );
+                            bottomButtons.setVisibility(View.GONE);
 
 
                         }
@@ -334,10 +346,8 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
 
     public void onClickAddTask(View v){
         if(!TextUtils.isEmpty(textIn.getText().toString())){
-            myDB.insertRow(textIn.getText().toString(),textViewDate.getText().toString());
+            myDB.insertRow(textIn.getText().toString(),textViewDate.getText().toString(),"not_done");
         }
-       // populateList();
-
     }
 
 
@@ -369,7 +379,7 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
 
             if(cursor.moveToFirst()){
                 String task = textIn.getText().toString();
-                myDB.updateRow(id,task,myDB.getRow(id).getColumnName(2).toString());
+                myDB.updateRow(id,task,myDB.getRow(id).getColumnName(2).toString(),"not_done");
             }
             cursor.close();
 
@@ -387,7 +397,7 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
                                     long id) {
                 // TODO Auto-generated method stub
 
-                taskNameSuggestion = myDB.getRow(id).getString(1);
+                taskNameSuggestion = myDB.getRow(id).getString(2);
 
 
                 editTextWithButton.setVisibility(View.GONE);

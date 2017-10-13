@@ -6,6 +6,8 @@
     android:layout_height="match_parent"
     android:weightSum="1"
     android:background="@color/colorBackground"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true"
     >
 
 
@@ -98,30 +100,32 @@
                             />
                     </RelativeLayout>
 
-                    <LinearLayout
-                        android:id="@+id/barBelowAdd"
-                        android:layout_width="match_parent"
-                        android:layout_height="12dp"
-                        android:orientation="vertical"
-                        android:background="@color/colorBackground"
-                        >
 
-
-                    </LinearLayout>
 
                     <LinearLayout
                         android:id="@+id/container"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        ></LinearLayout>
+                        android:orientation="horizontal"
+                        >
 
                     <Button
                         android:id="@+id/showAllTasks"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_weight="0.5"
                         android:text="Show all tasks"
                         />
+
+                    <Button
+                        android:id="@+id/showDoneTasks"
+                        android:layout_width="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="Show done"
+                        />
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
@@ -199,33 +203,42 @@
                 android:orientation="vertical"
                 >
 
-                <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:id="@+id/editTextWithButton"
-                    android:visibility="gone"
-                    >
-
-                    <Button
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/renameTaskButton"
-                        android:text="Rename"
-                        android:layout_alignParentRight="true"
-                        />
 
                     <EditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:id="@+id/editTextView"
-                        android:layout_alignParentLeft="true"
-                        android:layout_toLeftOf="@id/renameTaskButton"
-
+                        android:visibility="gone"
                         />
 
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom|center"
+                        android:orientation="horizontal"
+                        android:id="@+id/editTextWithButton"
+                        android:visibility="gone"
+                        >
+
+                        <Button
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/renameTaskButton"
+                            android:text="Rename"
+                            android:layout_alignParentRight="true"
+                            />
+
+                        <Button
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/cancelRenameTaskButton"
+                            android:text="Cancel"
+                            android:layout_alignParentRight="true"
+                            />
+
+                    </LinearLayout>
 
 
-                </RelativeLayout>
 
                         <LinearLayout
                             android:layout_width="match_parent"
