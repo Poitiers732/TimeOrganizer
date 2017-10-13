@@ -93,7 +93,7 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentLeft="true"
                             android:layout_toLeftOf="@id/add"
-                            android:imeOptions="actionDone"
+
 
                             />
                     </RelativeLayout>
@@ -171,7 +171,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
                 android:id="@+id/listViewTasks"
+
                 />
+
 
         </LinearLayout>
 
@@ -186,6 +188,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="220dp"
         android:id="@+id/relativeLayoutBottom"
+        android:visibility="gone"
         >
 
 

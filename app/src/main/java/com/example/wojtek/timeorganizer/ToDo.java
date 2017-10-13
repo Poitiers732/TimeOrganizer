@@ -77,6 +77,8 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
     String taskNameSuggestion = new String();
 
     long longid = 0;
+    int numberOfrows;
+    int repeatedClick = 0;
 
     RelativeLayout buttons_layout;
     LinearLayout bottomButtons;
@@ -278,6 +280,7 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
 
     public void populateFromDay(){
         Cursor cursor = myDB.getTermValues(getSelectedDatesString());
+        numberOfrows = cursor.getCount();
         String[] fromFieldNames = new String[] {DBAdapter.KEY_ROWID,DBAdapter.KEY_TASK,DBAdapter.KEY_DATE};
         int[] toViewIDs = new int[] {R.id.itemNumberTextView,R.id.taskTextView,R.id.dateTextView};
         SimpleCursorAdapter myCursorAdapter;
@@ -341,6 +344,7 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
     private void populateList(){
 
         Cursor cursor = myDB.getAllRows();
+        numberOfrows = cursor.getCount();
         String[] fromFieldNames = new String[] {DBAdapter.KEY_ROWID,DBAdapter.KEY_TASK,DBAdapter.KEY_DATE};
         int[] toViewIDs = new int[] {R.id.itemNumberTextView,R.id.taskTextView,R.id.dateTextView};
         SimpleCursorAdapter myCursorAdapter;
@@ -385,13 +389,35 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
 
                 taskNameSuggestion = myDB.getRow(id).getString(1);
 
-                relativeLayoutBottom.setVisibility(View.VISIBLE);
+
                 editTextWithButton.setVisibility(View.GONE);
 
+
+                for(int i=0;i<numberOfrows;i++) {
+                    try {
+                        View vv = myList.getChildAt(i);
+                        vv.setBackgroundColor(Color.WHITE);
+                    }catch(Exception e){}
+                }
+
+
+
+                if(id!=longid || repeatedClick>0){
+                    arg1.setBackgroundColor(Color.GREEN);
+                    repeatedClick=0;
+                    relativeLayoutBottom.setVisibility(View.VISIBLE);
+
+
+                }else {
+                    arg1.setBackgroundColor(Color.WHITE);
+                    repeatedClick++;
+                    relativeLayoutBottom.setVisibility(View.GONE);
+
+
+                }
+
+
                 longid = id;
-
-                arg1.setBackgroundColor(Color.GREEN);
-
 
                 if(bottomButtons.getVisibility()==View.GONE){
 
