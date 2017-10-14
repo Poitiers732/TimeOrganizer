@@ -115,9 +115,19 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="0.5"
                         android:text="Show all tasks"
+                        android:visibility="gone"
                         />
 
-                    <Button
+                        <ToggleButton
+                            android:id="@+id/toggleButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:textOn="All tasks"
+                            android:textOff="Daily tasks"
+                            />
+
+                        <Button
                         android:id="@+id/showDoneTasks"
                         android:layout_width="wrap_content"
                         android:layout_weight="1"

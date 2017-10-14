@@ -17,7 +17,7 @@ public class DBAdapter {
 	public static final String KEY_ROWID = "_id";
 	public static final String KEY_TASK = "task";
 	public static final String KEY_DATE = "date";
-	public static final String KEY_ISDONE = "isdone";
+	public static final String KEY_ISDONE = "is_done";
 
 
 	public static final String[] ALL_KEYS = new String[] {KEY_ROWID, KEY_TASK, KEY_DATE, KEY_ISDONE};
@@ -31,14 +31,14 @@ public class DBAdapter {
 	// DataBase info:
 	public static final String DATABASE_NAME = "dbToDo";
 	public static final String DATABASE_TABLE = "mainToDo";
-	public static final int DATABASE_VERSION = 4; // The version number must be incremented each time a change to DB structure occurs.
+	public static final int DATABASE_VERSION = 8; // The version number must be incremented each time a change to DB structure occurs.
 
 	//SQL statement to create database
 	private static final String DATABASE_CREATE_SQL =
 			"CREATE TABLE " + DATABASE_TABLE
 					+ " (" + KEY_ROWID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
 					+ KEY_TASK + " TEXT NOT NULL, "
-					+ KEY_DATE + " TEXT"
+					+ KEY_DATE + " TEXT, "
 					+ KEY_ISDONE + " TEXT"
 					+ ");";
 
@@ -64,10 +64,12 @@ public class DBAdapter {
 	}
 
 	// Add a new set of values to be inserted into the database.
-	public long insertRow(String task, String date, String isdone) {
+	public long insertRow(String task, String date, String is_done) {
 		ContentValues initialValues = new ContentValues();
 		initialValues.put(KEY_TASK, task);
 		initialValues.put(KEY_DATE, date);
+		initialValues.put(KEY_ISDONE, is_done);
+
 
 		// Insert the data into the database.
 		return db.insert(DATABASE_TABLE, null, initialValues);
@@ -92,9 +94,10 @@ public class DBAdapter {
 
 	// Return all data in the database.
 	public Cursor getAllRows() {
-		String where = null;
+		String where = KEY_ISDONE + "= 'not_done'";
 		String ALL_KEYS_ARRAY[] = new String[]{ KEY_ROWID,KEY_DATE,KEY_TASK };
-		Cursor c = 	db.query(true, DATABASE_TABLE, ALL_KEYS_ARRAY, where, null, null, null, null, null, null);
+		Cursor c = 	db.query(true, DATABASE_TABLE, ALL_KEYS, where, null, null, null, null, null, null);
+
 		if (c != null) {
 			c.moveToFirst();
 		}
@@ -106,7 +109,7 @@ public class DBAdapter {
 		String where = KEY_ROWID + "=" + rowId;
 		String ALL_KEYS_ARRAY[] = new String[]{ KEY_ROWID,KEY_DATE,KEY_TASK };
 
-		Cursor c = 	db.query(true, DATABASE_TABLE, ALL_KEYS_ARRAY,
+		Cursor c = 	db.query(true, DATABASE_TABLE, ALL_KEYS,
 				where, null, null, null, null, null);
 		if (c != null) {
 			c.moveToFirst();
@@ -116,24 +119,57 @@ public class DBAdapter {
 
 	public Cursor getTermValues(String term)
 	{
-		String where = KEY_DATE + "=?";
+		String where = KEY_DATE + "=?" + " AND " + KEY_ISDONE + "= 'not_done'";
 		String whereArgs[] = new String[]{ term };
 
 		String ALL_KEYS_ARRAY[] = new String[]{ KEY_ROWID,KEY_DATE,KEY_TASK };
-		Cursor cursor = db.query(DATABASE_TABLE, ALL_KEYS_ARRAY , where, whereArgs, null, null, null, null);
+		Cursor cursor = db.query(DATABASE_TABLE, ALL_KEYS , where, whereArgs, null, null, null, null);
+		return cursor;
+	}
+
+	public Cursor getDoneRows(String term)
+	{
+		String where = KEY_ISDONE + "=?";
+		String whereArgs[] = new String[]{ term };
+
+		Cursor cursor = db.query(DATABASE_TABLE, ALL_KEYS , where, whereArgs, null, null, null, null);
 		return cursor;
 	}
 
 	// Change an existing row to be equal to new data.
-	public boolean updateRow(long rowId, String task, String date, String isdone) {
+	public boolean updateRow(long rowId, String task, String date, String is_done) {
 		String where = KEY_ROWID + "=" + rowId;
 		ContentValues newValues = new ContentValues();
 		newValues.put(KEY_TASK, task);
 		newValues.put(KEY_DATE, date);
+		newValues.put(KEY_ISDONE, is_done);
 
 		// Insert it into the database.
 		return db.update(DATABASE_TABLE, newValues, where, null) != 0;
 	}
+
+	public boolean updateRowIsDone(long rowId, String is_done) {
+		String where = KEY_ROWID + "=" + rowId;
+		ContentValues newValues = new ContentValues();
+		is_done = "done";
+		newValues.put(KEY_ISDONE, is_done);
+
+
+		// Insert it into the database.
+		return db.update(DATABASE_TABLE, newValues, where, null) != 0;
+	}
+
+	// Change only isdone
+	/*
+	public boolean updateIsdone(long rowId, String isdone) {
+		String where = KEY_ROWID + "=" + rowId;
+		ContentValues newValues = new ContentValues();
+		newValues.put(KEY_ISDONE, isdone);
+
+		// Insert it into the database.
+		return db.update(DATABASE_TABLE, newValues, where, null) != 0;
+	}
+	*/
 
 
 	private static class DatabaseHelper extends SQLiteOpenHelper

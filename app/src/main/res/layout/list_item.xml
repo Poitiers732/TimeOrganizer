@@ -11,8 +11,12 @@
         android:id="@+id/taskTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="10dp"
+        android:gravity="center"
+        android:padding="2dp"
         android:text="TextView"
+        android:textSize="18dp"
+        android:layout_below="@+id/dateTextView"
+
         />
 
     <TextView
@@ -31,16 +35,24 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
+        android:text="not inserted"
+        android:layout_alignBaseline="@+id/dateTextView"
+        android:layout_alignBottom="@+id/dateTextView"
+        android:layout_toEndOf="@+id/dateTextView"
+        android:layout_marginStart="47dp"
+
         />
 
     <TextView
         android:id="@+id/dateTextView"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="TextView"
-        android:layout_alignBaseline="@+id/taskTextView"
-        android:layout_alignBottom="@+id/taskTextView"
-        android:layout_toEndOf="@+id/taskTextView"
+        android:padding="2dp"
+        android:background="@color/colorBackground"
+        android:textColor="@color/colorAccent"
+        android:gravity="center"
+
         />
 
     <Button
