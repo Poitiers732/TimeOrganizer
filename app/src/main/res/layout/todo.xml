@@ -14,7 +14,9 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="0.30">
+        android:layout_weight="1"
+
+        >
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -57,6 +59,7 @@
                 app:mcv_selectionColor="#7AE7FF"
                 app:mcv_showOtherDates="all"
                 android:visibility="visible"
+                android:focusable="true"
                 />
 
             <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -109,14 +112,6 @@
                         android:orientation="horizontal"
                         >
 
-                    <Button
-                        android:id="@+id/showAllTasks"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.5"
-                        android:text="Show all tasks"
-                        android:visibility="gone"
-                        />
 
                         <ToggleButton
                             android:id="@+id/toggleButton"
@@ -138,9 +133,6 @@
                     </LinearLayout>
 
                 </LinearLayout>
-
-
-
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -199,26 +191,18 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="220dp"
         android:id="@+id/relativeLayoutBottom"
         android:visibility="gone"
+        android:layout_alignParentBottom="true"
+        android:layout_weight="0.5"
         >
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/linearLayoutBottom"
-                android:orientation="vertical"
-                >
-
 
                     <EditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:id="@+id/editTextView"
-                        android:visibility="gone"
+                        android:visibility="visible"
+                        android:gravity="top"
                         />
 
                     <LinearLayout
@@ -227,7 +211,9 @@
                         android:layout_gravity="bottom|center"
                         android:orientation="horizontal"
                         android:id="@+id/editTextWithButton"
-                        android:visibility="gone"
+                        android:visibility="visible"
+                        android:layout_below="@+id/editTextView"
+
                         >
 
                         <Button
@@ -253,9 +239,9 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="bottom|center"
                             android:orientation="horizontal"
                             android:id="@+id/bottomButtons"
+                            android:visibility="gone"
                             >
 
 
@@ -288,9 +274,6 @@
                                     />
 
                         </LinearLayout>
-
-
-            </LinearLayout>
     </RelativeLayout>
 </LinearLayout>
 

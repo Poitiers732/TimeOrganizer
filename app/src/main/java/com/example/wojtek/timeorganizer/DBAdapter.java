@@ -140,9 +140,13 @@ public class DBAdapter {
 	public boolean updateRow(long rowId, String task, String date, String is_done) {
 		String where = KEY_ROWID + "=" + rowId;
 		ContentValues newValues = new ContentValues();
-		newValues.put(KEY_TASK, task);
+		if(!task.equals("x")) {
+			newValues.put(KEY_TASK, task);
+		}
 		newValues.put(KEY_DATE, date);
-		newValues.put(KEY_ISDONE, is_done);
+		if(!task.equals("x")) {
+			newValues.put(KEY_ISDONE, is_done);
+		}
 
 		// Insert it into the database.
 		return db.update(DATABASE_TABLE, newValues, where, null) != 0;
@@ -151,7 +155,7 @@ public class DBAdapter {
 	public boolean updateRowIsDone(long rowId, String is_done) {
 		String where = KEY_ROWID + "=" + rowId;
 		ContentValues newValues = new ContentValues();
-		is_done = "done";
+		//is_done = "done";
 		newValues.put(KEY_ISDONE, is_done);
 
 

@@ -16,7 +16,6 @@
         android:text="TextView"
         android:textSize="18dp"
         android:layout_below="@+id/dateTextView"
-
         />
 
     <TextView
