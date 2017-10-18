@@ -19,19 +19,19 @@ public class DBAdapter {
 	public static final String KEY_DATE = "date";
 	public static final String KEY_ISDONE = "is_done";
 
-
-	public static final String[] ALL_KEYS = new String[] {KEY_ROWID, KEY_TASK, KEY_DATE, KEY_ISDONE};
+    public static final String[] ALL_KEYS = new String[] {KEY_ROWID, KEY_TASK, KEY_DATE, KEY_ISDONE};
 
 	// Column Numbers for each Field Name:
 	public static final int COL_ROWID = 0;
 	public static final int COL_TASK = 1;
 	public static final int COL_DATE = 2;
 	public static final int COL_ISDONE = 3;
+    public static final int COL_SELECTED = 4;
 
 	// DataBase info:
 	public static final String DATABASE_NAME = "dbToDo";
 	public static final String DATABASE_TABLE = "mainToDo";
-	public static final int DATABASE_VERSION = 8; // The version number must be incremented each time a change to DB structure occurs.
+	public static final int DATABASE_VERSION = 10; // The version number must be incremented each time a change to DB structure occurs.
 
 	//SQL statement to create database
 	private static final String DATABASE_CREATE_SQL =

@@ -11,7 +11,9 @@ import android.text.InputType;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -35,7 +37,10 @@ import com.prolificinteractive.materialcalendarview.OnMonthChangedListener;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashSet;
+import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -98,6 +103,7 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
     LinearLayout bottomButtons;
 
     ListView listViewTasks;
+
     private ArrayAdapter<String> listAdapter ;
 
     final Calendar calendar = Calendar.getInstance();
@@ -132,7 +138,6 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
 
         relativeLayoutBottom = (RelativeLayout)findViewById(R.id.relativeLayoutBottom);
         editTextWithButton = (LinearLayout)findViewById(R.id.editTextWithButton);
-
 
         setToday = (Button)findViewById(R.id.setToday);
         buttonAdd = (Button)findViewById(R.id.add);
@@ -407,33 +412,45 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
         cursor.close();
     }
 
+
+
     private void listViewItemClick(){
         final ListView myList = (ListView) findViewById(R.id.listViewTasks);
+
+        /*
+        myList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                view.setSelected(true);
+                relativeLayoutBottom.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+*/
+
 
         myList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
                                     long id) {
-                // TODO Auto-generated method stub
+
                 taskNameSuggestion = myDB.getRow(id).getString(1);
                 editTextWithButton.setVisibility(View.GONE);
 
-                toastMessage("nr of rows: "+numberOfrows+" longid: "+longid + " id" + id);
+                if(id!=longid || repeatedClick>0  ){
+                 //   arg1.setBackgroundColor(Color.GREEN);
 
-                for(int i=0;i<numberOfrows;i++) {
-                    try {
-                        View vv = myList.getChildAt(i);
-                        vv.setBackgroundColor(Color.WHITE);
-                    }catch(Exception e){}
-                }
-                if(id!=longid || repeatedClick>0 ){
-                    arg1.setBackgroundColor(Color.GREEN);
-
+                    arg1.setSelected(true);
                     repeatedClick=0;
                     relativeLayoutBottom.setVisibility(View.VISIBLE);
                 }else {
-                    arg1.setBackgroundColor(Color.WHITE);
+                  //  arg1.setBackgroundColor(Color.WHITE);
                     repeatedClick++;
                     relativeLayoutBottom.setVisibility(View.GONE);
                 }
@@ -446,10 +463,15 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
                 else{
                    // bottomButtons.setVisibility(View.GONE);
                 }
+
+
             }
+
         });
 
+
         myList.setOnTouchListener(new OnSwipeTouchListener(this) {
+
 
             @Override
             public void onSwipeRight(AdapterView<?> arg0, View arg1, int arg2,
@@ -486,6 +508,7 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
                 }
             }
         });
+
     }
 
     private void hideKeyboard(){

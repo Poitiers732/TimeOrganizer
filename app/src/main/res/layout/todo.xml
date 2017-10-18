@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:weightSum="1"
-    android:background="@color/colorBackground"
+    android:background="@drawable/darkGray"
     android:descendantFocusability="beforeDescendants"
     android:focusableInTouchMode="true"
     >
@@ -40,7 +40,9 @@
                     android:onClick="showCalendar"
                     android:padding="5dp"
                     android:text="TextView"
-                    android:textSize="30dp" />
+                    android:textSize="30dp"
+                    android:textColor="#FFF"
+                    />
 
                 <Button
                 android:id="@+id/setToday"
@@ -56,10 +58,11 @@
                 android:id="@+id/calendarView"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                app:mcv_selectionColor="#7AE7FF"
+                app:mcv_selectionColor="#0B4EAF"
                 app:mcv_showOtherDates="all"
                 android:visibility="visible"
                 android:focusable="true"
+                android:background="@drawable/lightGray"
                 />
 
             <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -74,7 +77,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:background="#aae"
+                    android:background="@drawable/lightGray"
                     >
 
                     <RelativeLayout
@@ -177,7 +180,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
                 android:id="@+id/listViewTasks"
-
                 />
 
 
@@ -195,6 +197,7 @@
         android:visibility="gone"
         android:layout_alignParentBottom="true"
         android:layout_weight="0.5"
+        android:background="@drawable/lightGray"
         >
 
                     <EditText
@@ -203,6 +206,7 @@
                         android:id="@+id/editTextView"
                         android:visibility="visible"
                         android:gravity="top"
+                        android:textColor="#FFF"
                         />
 
                     <LinearLayout
