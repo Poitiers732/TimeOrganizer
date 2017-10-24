@@ -50,7 +50,12 @@ public class ItemArrayAdapter extends RecyclerView.Adapter<ItemArrayAdapter.View
         item.setText(itemList.get(listPosition).getName());
 
         TextView item2 = holder.item2;
+
         item2.setText(itemList.get(listPosition).getDate());
+
+        if( listPosition!=0 && itemList.get(listPosition).getDate().equals( itemList.get(listPosition-1).getDate() ) ) {
+            item2.setVisibility(View.GONE);
+        }
 
 
         // Add click listener for root view

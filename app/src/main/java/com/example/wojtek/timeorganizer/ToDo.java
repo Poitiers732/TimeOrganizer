@@ -96,6 +96,7 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
     String taskNameSuggestion = new String();
 
     long longid = 0;
+    int globalPosition = -1;
     int numberOfrows;
     int repeatedClick = 0;
 
@@ -194,6 +195,12 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
             @Override
             public void onItemClick(View view, int position) {
 
+                for(int i=0;i<itemList.size();i++){
+                    // very bad listitem cleaning method but works
+                    recyclerView.findViewHolderForLayoutPosition(i).itemView.callOnClick();
+                    recyclerView.findViewHolderForLayoutPosition(i).itemView.callOnClick();
+                }
+
                 view.setSelected(!view.isSelected());
 
                 if(view.isSelected()) {
@@ -204,6 +211,8 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
                     relativeLayoutBottom.setVisibility(View.GONE);
                     bottomButtons.setVisibility(View.GONE);
                 }
+
+                globalPosition = position;
             }
         });
 
@@ -500,6 +509,8 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
         for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
             itemList.add( new Item( cursor.getString( 1 ), cursor.getString( 2 ) ));
         }
+
+
 
    /*     String[] fromFieldNames = new String[] {DBAdapter.KEY_ROWID,DBAdapter.KEY_TASK,DBAdapter.KEY_DATE,DBAdapter.KEY_ISDONE};
         int[] toViewIDs = new int[] {R.id.itemNumberTextView,R.id.taskTextView,R.id.dateTextView,R.id.isdoneTextView};
