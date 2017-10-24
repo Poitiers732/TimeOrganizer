@@ -49,6 +49,10 @@ public class ItemArrayAdapter extends RecyclerView.Adapter<ItemArrayAdapter.View
         TextView item = holder.item;
         item.setText(itemList.get(listPosition).getName());
 
+        TextView item2 = holder.item2;
+        item2.setText(itemList.get(listPosition).getDate());
+
+
         // Add click listener for root view
         item.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,11 +64,12 @@ public class ItemArrayAdapter extends RecyclerView.Adapter<ItemArrayAdapter.View
     // Static inner class to initialize the views of rows
     static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView item;
+        public TextView item2;
         public ViewHolder(View itemView) {
             super(itemView);
             itemView.setOnClickListener(this);
             item = (TextView) itemView.findViewById(R.id.taskTextView);
-
+            item2 = (TextView) itemView.findViewById(R.id.dateTextView);
         }
         @Override
         public void onClick(View view) {

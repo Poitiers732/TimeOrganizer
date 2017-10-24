@@ -14,7 +14,7 @@ public class StartScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_screen);
 
-        final Intent i = new Intent(StartScreen.this,MainActivity.class);
+        final Intent i = new Intent(StartScreen.this,ToDo.class);
 
         TimerTask task = new TimerTask() {
             @Override

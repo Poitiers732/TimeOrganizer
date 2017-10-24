@@ -108,10 +108,10 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
 
     final Calendar calendar = Calendar.getInstance();
 
-    private static final String[] NUMBER = new String[] {
+  /*  private static final String[] NUMBER = new String[] {
             "One", "Two", "Three", "Four", "Five",
             "Six", "Seven", "Eight", "Nine", "Ten"
-    };
+    };*/
 
     ArrayAdapter<String> adapter;
 
@@ -129,8 +129,8 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
         widget.setDateSelected(calendar.getTime(), true);
         widget.setVisibility(View.GONE);
 
-        adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_dropdown_item_1line, NUMBER);
+       /* adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_dropdown_item_1line, NUMBER);*/
 
         textIn = (AutoCompleteTextView)findViewById(R.id.textin);
         textIn.setAdapter(adapter);
@@ -190,14 +190,11 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
-
         final ItemArrayAdapter itemArrayAdapter = new ItemArrayAdapter(R.layout.list_item, itemList, new ItemArrayAdapter.OnItemClicked () {
             @Override
             public void onItemClick(View view, int position) {
 
-
                 view.setSelected(!view.isSelected());
-
 
                 if(view.isSelected()) {
                     relativeLayoutBottom.setVisibility(View.VISIBLE);
@@ -207,15 +204,10 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
                     relativeLayoutBottom.setVisibility(View.GONE);
                     bottomButtons.setVisibility(View.GONE);
                 }
-
-
-
             }
         });
 
         populateRecycleList(itemList, itemArrayAdapter);
-
-
 
   /*      //ItemArrayAdapter itemArrayAdapter = new ItemArrayAdapter(R.layout.list_item, itemList);
 
@@ -232,7 +224,6 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
 
             final ListView myList = (ListView) findViewById(R.id.listViewTasks);
             showOnlyFirstDate(myList);
-
 
             myList.setOnScrollListener(new AbsListView.OnScrollListener() {
                 @Override
@@ -383,6 +374,7 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
                 myDB.deleteRow(longid);
 
                 populateList();
+                populateRecycleList(itemList, itemArrayAdapter);
 
             }
         });
@@ -495,7 +487,6 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
         }
         numberOfrows = cursor.getCount();
 
-
 /*
         final ArrayList<Item> itemList = new ArrayList<Item>();
 */
@@ -507,10 +498,8 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
         recyclerView.setAdapter(itemArrayAdapter);
 
         for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
-            itemList.add( new Item( cursor.getString( 1 ) ));
+            itemList.add( new Item( cursor.getString( 1 ), cursor.getString( 2 ) ));
         }
-
-
 
    /*     String[] fromFieldNames = new String[] {DBAdapter.KEY_ROWID,DBAdapter.KEY_TASK,DBAdapter.KEY_DATE,DBAdapter.KEY_ISDONE};
         int[] toViewIDs = new int[] {R.id.itemNumberTextView,R.id.taskTextView,R.id.dateTextView,R.id.isdoneTextView};
