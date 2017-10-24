@@ -6,12 +6,13 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.widget.RelativeLayout;
 
 //import static android.icu.text.MessagePattern.ArgType.SELECT;
 
 public class DBAdapter {
 
-	private static final String TAG = "DBAdapter"; //used for logging database version changes
+    private static final String TAG = "DBAdapter"; //used for logging database version changes
 
 	// Field Names:
 	public static final String KEY_ROWID = "_id";

@@ -2,13 +2,11 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:id="@+id/listItem"
     android:background="@drawable/selectable_background"
     android:padding="0dp"
-
     >
-
 
     <TextView
         android:id="@+id/taskTextView"
@@ -20,21 +18,18 @@
         android:layout_below="@+id/dateTextView"
         android:gravity="left"
         android:textColor="#FFF"
-
         />
 
     <TextView
-        android:id="@+id/itemNumberTextView"
-        android:layout_width="wrap_content"
+        android:id="@+id/dateTextView"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="TextView"
-        android:textColor="@color/colorAccent"
-        android:visibility="gone"
-        android:gravity="right"
-        android:layout_marginEnd="67dp"
-        android:layout_alignBaseline="@+id/taskTextView"
-        android:layout_alignBottom="@+id/taskTextView"
-        android:layout_alignParentEnd="true" />
+        android:padding="2dp"
+        android:background="@drawable/lightGray"
+        android:textColor="#FFF"
+        android:gravity="center"
+        />
 
     <TextView
         android:id="@+id/isdoneTextView"
@@ -48,17 +43,20 @@
         android:layout_toEndOf="@+id/taskTextView"
         android:layout_marginStart="67dp" />
 
+    <!--
+
     <TextView
-        android:id="@+id/dateTextView"
-        android:layout_width="match_parent"
+        android:id="@+id/itemNumberTextView"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="TextView"
-        android:padding="2dp"
-        android:background="@drawable/lightGray"
-        android:textColor="#FFF"
-        android:gravity="center"
-
-        />
+        android:textColor="@color/colorAccent"
+        android:visibility="gone"
+        android:gravity="right"
+        android:layout_marginEnd="67dp"
+        android:layout_alignBaseline="@+id/taskTextView"
+        android:layout_alignBottom="@+id/taskTextView"
+        android:layout_alignParentEnd="true" />
 
     <Button
         android:id="@+id/buttonEdit"
@@ -91,6 +89,8 @@
         android:visibility="gone"
 
         />
+
+        -->
 
 
 

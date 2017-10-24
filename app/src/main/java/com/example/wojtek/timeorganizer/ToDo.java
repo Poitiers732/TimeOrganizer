@@ -2,18 +2,18 @@ package com.example.wojtek.timeorganizer;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.text.InputType;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Adapter;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -27,8 +27,6 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
-import android.widget.AdapterView.OnItemLongClickListener;
-
 
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
@@ -39,8 +37,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -115,12 +113,13 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
 
     ArrayAdapter<String> adapter;
 
+    RecyclerView recyclerView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.todo);
         ButterKnife.bind(this);
-
 
         widget.setOnDateChangedListener(this);
         widget.setOnMonthChangedListener(this);
@@ -130,8 +129,6 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
 
         adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_dropdown_item_1line, NUMBER);
-
-
 
         textIn = (AutoCompleteTextView)findViewById(R.id.textin);
         textIn.setAdapter(adapter);
@@ -167,11 +164,7 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
 
         toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    populateAllTasks = true;
-                } else {
-                    populateAllTasks = false;
-                }
+                populateAllTasks = isChecked;
                 populateList();
             }
         });
@@ -180,8 +173,97 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
 
         openDB();
         populateList();
+        populateRecycleList();
 
-        listViewItemClick();
+        //listViewItemClick();
+
+        populateRecycleList();
+
+        /*
+        * listview
+        */
+
+            final ListView myList = (ListView) findViewById(R.id.listViewTasks);
+            showOnlyFirstDate(myList);
+
+
+            myList.setOnScrollListener(new AbsListView.OnScrollListener() {
+                @Override
+                public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+                }
+
+                @Override
+                public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+                }
+            });
+
+            myList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+                                        long id) {
+
+                    showOnlyFirstDate(myList);
+
+                    taskNameSuggestion = myDB.getRow(id).getString(1);
+                    editTextWithButton.setVisibility(View.GONE);
+
+                    if(id!=longid || repeatedClick>0  ){
+                        //   arg1.setBackgroundColor(Color.GREEN);
+                        arg1.setSelected(true);
+                        repeatedClick=0;
+                        relativeLayoutBottom.setVisibility(View.VISIBLE);
+                    }else {
+                        //  arg1.setBackgroundColor(Color.WHITE);
+                        repeatedClick++;
+                        relativeLayoutBottom.setVisibility(View.GONE);
+                    }
+                    longid = id;
+
+                    if(bottomButtons.getVisibility()==View.GONE){
+                        bottomButtons.setVisibility(View.VISIBLE);
+                    }
+                    else{
+                        // bottomButtons.setVisibility(View.GONE);
+                    }
+                }
+            });
+
+            myList.setOnTouchListener(new OnSwipeTouchListener(this) {
+                @Override
+                public void onSwipeRight(AdapterView<?> arg0, View arg1, int arg2,
+                                         long id) {
+
+                    if( !myDB.getRow(longid).getString(3).equals("done")) {
+
+                        toastMessage(myDB.getRow(longid).getString(1).toString() + " done!");
+
+                        Cursor cursor = myDB.getRow(longid);
+                        if (cursor.moveToFirst()) {
+                            myDB.updateRowIsDone(longid, "done");
+                        }
+                        cursor.close();
+                        populateList();
+                    }
+                }
+
+                @Override
+                public void onSwipeLeft(AdapterView<?> arg0, View arg1, int arg2,
+                                        long id) {
+                    if( myDB.getRow(longid).getString(3).equals("done")) {
+
+                        toastMessage(myDB.getRow(longid).getString(1).toString() + " is now set as not done yet");
+
+                        Cursor cursor = myDB.getRow(longid);
+                        if (cursor.moveToFirst()) {
+                            myDB.updateRowIsDone(longid, "not_done");
+                        }
+                        cursor.close();
+                        populateDoneList();
+                    }
+                }
+            });
 
         showDoneTasks.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -206,93 +288,93 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
         renameTaskButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-
                 Cursor cursor = myDB.getRow(longid);
-                if (cursor.moveToFirst()){
-                    String task = editTextView.getText().toString();
-                    myDB.updateRow(longid, task, textViewDate.getText().toString(), "not_done");
-                }
-
+                    if (cursor.moveToFirst()) {
+                        String task = editTextView.getText().toString();
+                        myDB.updateRow(longid, task, textViewDate.getText().toString(), "not_done");
+                    }
                 cursor.close();
-
-                    populateList();
-
-
+                populateList();
                 relativeLayoutBottom.setVisibility(View.GONE);
                 editTextView.setVisibility(View.GONE);
                 hideKeyboard();
             }
         });
 
-    buttonAdd.setOnClickListener(new View.OnClickListener(){
-        @Override
-        public void onClick(View v) {
+        buttonAdd.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
 
-            onClickAddTask(v);
-            populateList();
-            allTasksPopulated = false;
-            textIn.setText("");
-            textIn.clearFocus();
+                onClickAddTask(v);
+                populateList();
+                allTasksPopulated = false;
+                textIn.setText("");
+                textIn.clearFocus();
+                populateRecycleList();
 
-            hideKeyboard();
-        }
-    });
+                hideKeyboard();
+            }
+        });
 
-                    buttonEdit.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
+        buttonEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
-                            editTextWithButton.setVisibility(View.VISIBLE);
-                            editTextView.setVisibility(View.VISIBLE);
+                editTextWithButton.setVisibility(View.VISIBLE);
+                editTextView.setVisibility(View.VISIBLE);
 
-                            editTextView.setText(taskNameSuggestion);
-                            bottomButtons.setVisibility(View.GONE);
+                editTextView.setText(taskNameSuggestion);
+                bottomButtons.setVisibility(View.GONE);
+                repeatedClick = 0;
 
-                            repeatedClick = 0;
-                        }
-                    });
+            }
+        });
 
-                    buttonRemove.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Toast.makeText(getBaseContext(),"Edit",Toast.LENGTH_SHORT).show();
+        buttonRemove.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                myDB.deleteRow(longid);
 
-                            myDB.deleteRow(longid);
+                populateList();
 
-                                populateList();
+            }
+        });
 
-                        }
-                    });
+        buttonEditDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
-                    buttonEditDate.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
+                widget.setVisibility(View.VISIBLE);
+                widget.requestFocus();
+                editDateMode = true;
 
-                        widget.setVisibility(View.VISIBLE);
-                            widget.requestFocus();
+            }
+        });
 
-                            editDateMode = true;
+        buttonHide.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                relativeLayoutBottom.setVisibility(View.GONE);
 
-                        }
-                    });
+                populateList();
 
-                    buttonHide.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            relativeLayoutBottom.setVisibility(View.GONE);
-
-                                populateList();
-
-                            repeatedClick=0;
-
-                        }
-                    });
-
+                repeatedClick = 0;
+            }
+        });
 }
+
+    private View.OnClickListener recycle_listener    =   new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+
+            /*view.setSelected(!view.isSelected());
+            toastMessage("lol");*/
+
+        }
+    };
 
     @Override
     public void onDateSelected(@NonNull MaterialCalendarView widget, @Nullable CalendarDay date, boolean selected) {
-
         if(!editDateMode) {
             textViewDate.setText(getSelectedDatesString());
 
@@ -354,6 +436,51 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
         }
     }
 
+    private void populateRecycleList(){
+
+        Cursor cursor;
+
+        if(!populateAllTasks) {
+            cursor = myDB.getTermValues(getSelectedDatesString());
+        }
+        else{
+            cursor = myDB.getAllRows();
+        }
+        numberOfrows = cursor.getCount();
+
+
+        ArrayList<Item> itemList = new ArrayList<Item>();
+
+        ItemArrayAdapter itemArrayAdapter = new ItemArrayAdapter(R.layout.list_item, itemList);
+        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(itemArrayAdapter);
+
+        for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+            itemList.add( new Item( cursor.getString( 1 ) ));
+
+        }
+
+
+
+   /*     String[] fromFieldNames = new String[] {DBAdapter.KEY_ROWID,DBAdapter.KEY_TASK,DBAdapter.KEY_DATE,DBAdapter.KEY_ISDONE};
+        int[] toViewIDs = new int[] {R.id.itemNumberTextView,R.id.taskTextView,R.id.dateTextView,R.id.isdoneTextView};
+
+        SimpleCursorAdapter myCursorAdapter;
+        myCursorAdapter = new SimpleCursorAdapter(getBaseContext(),R.layout.list_item, cursor, fromFieldNames, toViewIDs,0);
+        ListView myList = (ListView) findViewById(R.id.listViewTasks);
+        myList.setAdapter(myCursorAdapter);*/
+
+
+    /*    // Populating list items
+        for(int i=0; i<numberOfrows; i++) {
+            itemList.add(new Item( my ));
+        }*/
+
+    }
+
+
     private void populateList(){
 
         Cursor cursor = myDB.getAllRows();
@@ -374,11 +501,9 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
         repeatedClick = 0;
         bottomButtons.setVisibility(View.GONE);
         editTextView.setVisibility(View.GONE);
-
     }
 
     private void populateDoneList(){
-
         Cursor cursor = myDB.getDoneRows( "done" );
         numberOfrows = cursor.getCount();
         String[] fromFieldNames = new String[] {DBAdapter.KEY_ROWID,DBAdapter.KEY_TASK,DBAdapter.KEY_DATE,DBAdapter.KEY_ISDONE};
@@ -404,7 +529,6 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
 
     private void updateTask(long id){
         Cursor cursor = myDB.getRow(id);
-
             if(cursor.moveToFirst()){
                 String task = textIn.getText().toString();
                 myDB.updateRow(id,task,myDB.getRow(id).getColumnName(2).toString(),"not_done");
@@ -412,40 +536,62 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
         cursor.close();
     }
 
+    public void showOnlyFirstDate(ListView myList){
 
 
-    private void listViewItemClick(){
+        Map<Integer,String> ml = new HashMap<>();
+        Map<Integer,Integer> mlRep = new HashMap<>();
+
+        String temp;
+
+        for(int i=0;i<numberOfrows;i++){
+            try {
+                mlRep.put(i, 0);
+                temp = ((TextView) myList.getChildAt(i).findViewById(R.id.dateTextView)).getText().toString();
+                ml.put(i, temp);
+            } catch (Exception e){}
+        }
+
+        for(int i=0;i<=numberOfrows;i++){
+            try {
+                if(ml.get(i).equals(ml.get(i+1))) {
+                    myList.getChildAt(i+1).findViewById(R.id.dateTextView).setVisibility(View.GONE);
+                }
+
+
+            }catch (Exception e){}
+        }
+    }
+
+    /*private void listViewItemClick(){
         final ListView myList = (ListView) findViewById(R.id.listViewTasks);
 
-        /*
-        myList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        myList.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                view.setSelected(true);
-                relativeLayoutBottom.setVisibility(View.VISIBLE);
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                String temp;
+
 
             }
         });
 
-*/
-
-
         myList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
                                     long id) {
+
+                //showOnlyFirstDate();
 
                 taskNameSuggestion = myDB.getRow(id).getString(1);
                 editTextWithButton.setVisibility(View.GONE);
 
                 if(id!=longid || repeatedClick>0  ){
                  //   arg1.setBackgroundColor(Color.GREEN);
-
                     arg1.setSelected(true);
                     repeatedClick=0;
                     relativeLayoutBottom.setVisibility(View.VISIBLE);
@@ -457,21 +603,15 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
                 longid = id;
 
                 if(bottomButtons.getVisibility()==View.GONE){
-
                     bottomButtons.setVisibility(View.VISIBLE);
                 }
                 else{
                    // bottomButtons.setVisibility(View.GONE);
                 }
-
-
             }
-
         });
 
-
         myList.setOnTouchListener(new OnSwipeTouchListener(this) {
-
 
             @Override
             public void onSwipeRight(AdapterView<?> arg0, View arg1, int arg2,
@@ -485,11 +625,9 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
                     if (cursor.moveToFirst()) {
                         myDB.updateRowIsDone(longid, "done");
                     }
-
                     cursor.close();
                     populateList();
                 }
-
             }
 
             @Override
@@ -508,8 +646,8 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
                 }
             }
         });
+    }*/
 
-    }
 
     private void hideKeyboard(){
         InputMethodManager inputManager = (InputMethodManager)
@@ -517,6 +655,5 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
         inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
                 InputMethodManager.HIDE_NOT_ALWAYS);
     }
-
 }
 
