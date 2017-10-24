@@ -2,6 +2,7 @@ package com.example.wojtek.timeorganizer;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,6 +12,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
@@ -171,17 +173,62 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
 
         bottomButtons = (LinearLayout)findViewById(R.id.bottomButtons);
 
+        final ArrayList<Item> itemList = new ArrayList<Item>();
+
+
         openDB();
         populateList();
-        populateRecycleList();
+/*
+        populateRecycleList(itemList);
+*/
 
         //listViewItemClick();
-
-        populateRecycleList();
 
         /*
         * listview
         */
+
+        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+
+
+        final ItemArrayAdapter itemArrayAdapter = new ItemArrayAdapter(R.layout.list_item, itemList, new ItemArrayAdapter.OnItemClicked () {
+            @Override
+            public void onItemClick(View view, int position) {
+
+
+                view.setSelected(!view.isSelected());
+
+
+                if(view.isSelected()) {
+                    relativeLayoutBottom.setVisibility(View.VISIBLE);
+                   bottomButtons.setVisibility(View.VISIBLE);
+                }
+                else {
+                    relativeLayoutBottom.setVisibility(View.GONE);
+                    bottomButtons.setVisibility(View.GONE);
+                }
+
+
+
+            }
+        });
+
+        populateRecycleList(itemList, itemArrayAdapter);
+
+
+
+  /*      //ItemArrayAdapter itemArrayAdapter = new ItemArrayAdapter(R.layout.list_item, itemList);
+
+        ItemArrayAdapter itemArrayAdapter = new ItemArrayAdapter(R.layout.list_item, itemList, new ItemArrayAdapter.OnItemClicked () {
+            @Override
+            public void onItemClick(View view, int position) {
+
+                toastMessage(""+position);
+
+                view.setSelected(true);
+
+            }
+        });*/
 
             final ListView myList = (ListView) findViewById(R.id.listViewTasks);
             showOnlyFirstDate(myList);
@@ -310,7 +357,7 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
                 allTasksPopulated = false;
                 textIn.setText("");
                 textIn.clearFocus();
-                populateRecycleList();
+                populateRecycleList(itemList, itemArrayAdapter);
 
                 hideKeyboard();
             }
@@ -436,7 +483,7 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
         }
     }
 
-    private void populateRecycleList(){
+    private void populateRecycleList(final ArrayList<Item> itemList, final ItemArrayAdapter itemArrayAdapter){
 
         Cursor cursor;
 
@@ -449,17 +496,18 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
         numberOfrows = cursor.getCount();
 
 
-        ArrayList<Item> itemList = new ArrayList<Item>();
+/*
+        final ArrayList<Item> itemList = new ArrayList<Item>();
+*/
 
-        ItemArrayAdapter itemArrayAdapter = new ItemArrayAdapter(R.layout.list_item, itemList);
-        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        //ItemArrayAdapter itemArrayAdapter = new ItemArrayAdapter(R.layout.list_item, itemList);
+
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(itemArrayAdapter);
 
         for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
             itemList.add( new Item( cursor.getString( 1 ) ));
-
         }
 
 

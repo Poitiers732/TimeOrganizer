@@ -20,10 +20,12 @@ public class ItemArrayAdapter extends RecyclerView.Adapter<ItemArrayAdapter.View
     //All methods in this adapter are required for a bare minimum recyclerview adapter
     private int listItemLayout;
     private ArrayList<Item> itemList;
+    private OnItemClicked listener;
     // Constructor of the class
-    public ItemArrayAdapter(int layoutId, ArrayList<Item> itemList) {
+    public ItemArrayAdapter(int layoutId, ArrayList<Item> itemList, OnItemClicked  listener) {
         listItemLayout = layoutId;
         this.itemList = itemList;
+        this.listener = listener;
     }
 
     // get the size of the list
@@ -46,6 +48,14 @@ public class ItemArrayAdapter extends RecyclerView.Adapter<ItemArrayAdapter.View
     public void onBindViewHolder(final ViewHolder holder, final int listPosition) {
         TextView item = holder.item;
         item.setText(itemList.get(listPosition).getName());
+
+        // Add click listener for root view
+        item.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                listener.onItemClick(view, listPosition);
+            }
+        });
     }
     // Static inner class to initialize the views of rows
     static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -63,5 +73,9 @@ public class ItemArrayAdapter extends RecyclerView.Adapter<ItemArrayAdapter.View
             view.setSelected(!view.isSelected());
 
         }
+    }
+
+    public interface OnItemClicked {
+        void onItemClick(View view, int position);
     }
 }
