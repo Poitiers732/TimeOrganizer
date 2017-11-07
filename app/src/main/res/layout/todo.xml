@@ -7,9 +7,7 @@
     android:weightSum="1"
     android:background="@drawable/darkGray"
     android:descendantFocusability="beforeDescendants"
-    android:focusableInTouchMode="true"
-    >
-
+    android:focusableInTouchMode="true">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -192,7 +190,6 @@
 
     </ScrollView>
 
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -241,8 +238,6 @@
 
                     </LinearLayout>
 
-
-
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -250,7 +245,6 @@
                             android:id="@+id/bottomButtons"
                             android:visibility="gone"
                             >
-
 
                             <Button
                                 android:id="@+id/buttonEdit"

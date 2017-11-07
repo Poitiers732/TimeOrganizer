@@ -4,6 +4,7 @@
     <color name="colorPrimaryDark">#3a3535</color>
     <color name="colorAccent">#FFF</color>
     <color name="colorBackground">#eaedf9</color>
+    <color name="colorCyan">#6cf8ff</color>
     <drawable name="darkGray">#3a3535</drawable>
     <drawable name="lightGray">#545454</drawable>
     <drawable name="midBlue">#0B4EAF</drawable>

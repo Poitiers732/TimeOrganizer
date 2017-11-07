@@ -3,9 +3,13 @@
     <item
         android:state_selected="true"
         android:drawable="@drawable/midBlue"/>
-
+    <item
+        android:state_selected="false"
+        android:drawable="@drawable/darkGray"/>
+    <!--
     <item
         android:state_pressed="true"
-        android:drawable="@drawable/midBlue"/>
+        android:drawable="@color/colorCyan"/>
+        -->
 </selector>
 
