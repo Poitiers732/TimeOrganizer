@@ -227,6 +227,7 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
                 return false;
             }
 
+
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
                 //Remove swiped item from list and notify the RecyclerView
@@ -262,6 +263,8 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
                     cursor.close();
                 }
 
+                else
+
                 populateRecycleList(itemList, itemArrayAdapter);
                 populateList();
             }
@@ -274,7 +277,7 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
 
         populateRecycleList(itemList, itemArrayAdapter);
 
-            final ListView myList = (ListView) findViewById(R.id.listViewTasks);
+            /*final ListView myList = (ListView) findViewById(R.id.listViewTasks);
 
             myList.setOnScrollListener(new AbsListView.OnScrollListener() {
                 @Override
@@ -352,7 +355,7 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
                         populateDoneList();
                     }
                 }
-            });
+            });*/
 
         showDoneTasks.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -466,14 +469,6 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
             }
         });
 }
-
-    private View.OnClickListener recycle_listener    =   new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-
-        }
-
-    };
 
     @Override
     public void onDateSelected(@NonNull MaterialCalendarView widget, @Nullable CalendarDay date, boolean selected) {

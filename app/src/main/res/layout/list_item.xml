@@ -24,10 +24,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="TextView"
-        android:padding="6dp"
+        android:textSize="12dp"
+        android:padding="2dp"
         android:background="@drawable/lightGray"
         android:textColor="#FFF"
         android:gravity="center"
+
         />
 
     <TextView
