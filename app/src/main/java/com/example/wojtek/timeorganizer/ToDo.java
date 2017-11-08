@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
@@ -61,7 +62,6 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
     TextView textViewDate;
 
     AutoCompleteTextView textIn;
-    TextView textDate;
     Button buttonAdd, setToday;
     LinearLayout container;
     TextView reList, info;
@@ -87,23 +87,28 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
 
     Boolean allTasksPopulated = false;
     Boolean editDateMode = false;
+    Boolean showDoneMode = false;
 
     Boolean populateAllTasks = true;
 
     String taskNameSuggestion = new String();
 
-    long longid = 0;
+    View currentSelectedView = null;
+
+    public long longid = 0;
     int globalPosition = -10;
     int numberOfrows;
     int repeatedClick = 0;
+
+    ArrayList<Item> itemList;
+    ItemArrayAdapter itemArrayAdapterGlobal;
 
     RelativeLayout buttons_layout;
     LinearLayout bottomButtons;
 
     ListView listViewTasks;
 
-    private ArrayAdapter<String> listAdapter ;
-
+    private ArrayAdapter<String> listAdapter;
     final Calendar calendar = Calendar.getInstance();
   /*  private static final String[] NUMBER = new String[] {
             "One", "Two", "Three", "Four", "Five",
@@ -159,18 +164,11 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
         cancelRenameTaskButton = (Button)findViewById(R.id.cancelRenameTaskButton);
         showDoneTasks = (Button) findViewById(R.id.showDoneTasks);
 
-        toggleButton = (ToggleButton) findViewById(R.id.toggleButton);
-
-        toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                populateAllTasks = isChecked;
-                populateList();
-            }
-        });
+        toggleButton = (ToggleButton) findViewById(R.id.toggleAllDaily);
 
         bottomButtons = (LinearLayout)findViewById(R.id.bottomButtons);
 
-        final ArrayList<Item> itemList = new ArrayList<Item>();
+        itemList = new ArrayList<Item>();
 
         openDB();
         populateList();
@@ -181,6 +179,11 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
 
             @Override
             public void onItemClick(View view, int position) {
+
+                editTextView.setVisibility(View.GONE);
+                editTextWithButton.setVisibility(View.GONE);
+
+                currentSelectedView = view;
 
                 relativeLayoutBottom.setVisibility(View.VISIBLE);
                 bottomButtons.setVisibility(View.VISIBLE);
@@ -196,8 +199,78 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
                     relativeLayoutBottom.setVisibility(View.GONE);
                     bottomButtons.setVisibility(View.GONE);
                 }
+
+                globalPosition = position;
+                longid = Integer.valueOf( itemList.get(position).getId() );
             }
         });
+
+        itemArrayAdapterGlobal = itemArrayAdapter;
+
+        toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                populateAllTasks = isChecked;
+                populateList();
+                populateRecycleList(itemList, itemArrayAdapter);
+                editTextWithButton.setVisibility(View.GONE);
+            }
+        });
+
+        ///SWIPE
+
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                populateList();
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                //Remove swiped item from list and notify the RecyclerView
+                int position = viewHolder.getAdapterPosition();
+
+                if (swipeDir == ItemTouchHelper.RIGHT && !myDB.getRow(longid).getString(3).equals("done")) {
+
+                    itemList.remove(position);
+                    itemArrayAdapter.notifyDataSetChanged();
+
+                    toastMessage(myDB.getRow(longid).getString(1).toString() + " done, congrats!");
+
+                    Cursor cursor = myDB.getRow(longid);
+                    if (cursor.moveToFirst()) {
+                        myDB.updateRowIsDone(longid, "done");
+                    }
+                    cursor.close();
+
+                }
+
+                if (swipeDir == ItemTouchHelper.LEFT && !myDB.getRow(longid).getString(3).equals("not_done")
+                        && myDB.getRow(longid).getString(3).equals("done")) {
+
+                    itemList.remove(position);
+                    itemArrayAdapter.notifyDataSetChanged();
+
+                    toastMessage(myDB.getRow(longid).getString(1).toString() + " is now set as not done yet");
+
+                    Cursor cursor = myDB.getRow(longid);
+                    if (cursor.moveToFirst()) {
+                        myDB.updateRowIsDone(longid, "not_done");
+                    }
+                    cursor.close();
+                }
+
+                populateRecycleList(itemList, itemArrayAdapter);
+                populateList();
+            }
+        };
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
+
+        ///
 
         populateRecycleList(itemList, itemArrayAdapter);
 
@@ -285,7 +358,10 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
             @Override
             public void onClick(View v) {
 
-               populateDoneList();
+                showDoneMode = true;
+                populateRecycleList(itemList, itemArrayAdapter);
+                populateList();
+                showDoneMode = false;
 
             }
         });
@@ -328,6 +404,7 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
                 textIn.setText("");
                 textIn.clearFocus();
                 populateRecycleList(itemList, itemArrayAdapter);
+                editTextWithButton.setVisibility(View.GONE);
 
                 hideKeyboard();
             }
@@ -343,8 +420,7 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
                 editTextView.setText(taskNameSuggestion);
                 bottomButtons.setVisibility(View.GONE);
 
-                populateRecycleList(itemList, itemArrayAdapter);
-
+                view.setSelected(true);
             }
         });
 
@@ -359,6 +435,8 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
                 itemArrayAdapter.notifyItemRangeChanged(globalPosition, itemList.size());
 
                 populateRecycleList(itemList, itemArrayAdapter);
+                relativeLayoutBottom.setVisibility(View.GONE);
+                editTextWithButton.setVisibility(View.GONE);
             }
         });
 
@@ -378,6 +456,10 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
             public void onClick(View view) {
                 relativeLayoutBottom.setVisibility(View.GONE);
 
+                if(currentSelectedView!=null) {
+                    currentSelectedView.setSelected(false);
+                }
+
                 populateList();
 
                 repeatedClick = 0;
@@ -389,18 +471,15 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
         @Override
         public void onClick(View view) {
 
-            /*view.setSelected(!view.isSelected());
-            toastMessage("lol");*/
-
         }
-    };
 
+    };
 
     @Override
     public void onDateSelected(@NonNull MaterialCalendarView widget, @Nullable CalendarDay date, boolean selected) {
-        if(!editDateMode) {
-            textViewDate.setText(getSelectedDatesString());
 
+        textViewDate.setText(getSelectedDatesString());
+        if(!editDateMode) {
             toggleButton.setChecked(false);
             allTasksPopulated = false;
         }
@@ -410,6 +489,8 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
             widget.setVisibility(View.GONE);
         }
         populateList();
+        populateRecycleList(itemList, itemArrayAdapterGlobal);
+        widget.setVisibility(View.GONE);
     }
 
     @Override
@@ -462,7 +543,10 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
 
         Cursor cursor;
 
-        if(!populateAllTasks) {
+        if (showDoneMode) {
+            cursor = myDB.getDoneRows("done");
+        }
+        else if(!populateAllTasks) {
             cursor = myDB.getTermValues(getSelectedDatesString());
         }
         else{
@@ -496,9 +580,7 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
 
     }
 
-
     private void populateList(){
-
         repeatedClick = 0;
         bottomButtons.setVisibility(View.GONE);
         editTextView.setVisibility(View.GONE);
@@ -553,7 +635,7 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
         }
     }
 
-    /*private void listViewItemClick(){
+    private void listViewItemClick(){
         final ListView myList = (ListView) findViewById(R.id.listViewTasks);
 
         myList.setOnScrollListener(new AbsListView.OnScrollListener() {
@@ -567,7 +649,7 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
             }
         });
 
-        myList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        /*myList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
                                     long id) {
@@ -632,8 +714,8 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
                     populateDoneList();
                 }
             }
-        });
-    }*/
+        });*/
+    }
 
     private void hideKeyboard() {
         InputMethodManager inputManager = (InputMethodManager)

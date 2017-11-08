@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:weightSum="1"
     android:background="@drawable/darkGray"
     android:descendantFocusability="beforeDescendants"
-    android:focusableInTouchMode="true">
+    android:focusableInTouchMode="true"
+    android:orientation="vertical"
+    android:weightSum="1">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -19,16 +19,15 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:gravity="center"
-                android:paddingTop="5dp"
-                >
+                android:orientation="horizontal"
+                android:paddingTop="5dp">
 
                 <TextView
                     android:id="@+id/textViewDate"
@@ -38,17 +37,16 @@
                     android:onClick="showCalendar"
                     android:padding="5dp"
                     android:text="TextView"
-                    android:textSize="30dp"
                     android:textColor="#FFF"
-                    />
+                    android:textSize="30dp" />
 
                 <Button
-                android:id="@+id/setToday"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:onClick="setTodayDate"
-                android:text="Today" />
+                    android:id="@+id/setToday"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:onClick="setTodayDate"
+                    android:text="Today" />
 
             </LinearLayout>
 
@@ -56,12 +54,11 @@
                 android:id="@+id/calendarView"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                app:mcv_selectionColor="#0B4EAF"
-                app:mcv_showOtherDates="all"
-                android:visibility="visible"
-                android:focusable="true"
                 android:background="@drawable/lightGray"
-                />
+                android:focusable="true"
+                android:visibility="visible"
+                app:mcv_selectionColor="#0B4EAF"
+                app:mcv_showOtherDates="all" />
 
             <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
@@ -74,23 +71,20 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
                     android:background="@drawable/lightGray"
-                    >
+                    android:orientation="vertical">
 
                     <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        >
+                        android:layout_height="wrap_content">
 
                         <Button
                             android:id="@+id/add"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
-                            android:text="Add"
                             android:onClick="onClickAddTask"
-                            />
+                            android:text="Add" />
 
 
                         <AutoCompleteTextView
@@ -100,6 +94,8 @@
                             android:layout_alignParentLeft="true"
                             android:layout_toLeftOf="@id/add"
                             android:textColor="@color/colorAccent"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"
                             />
                     </RelativeLayout>
 
@@ -107,26 +103,24 @@
                         android:id="@+id/container"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        >
+                        android:orientation="horizontal">
 
 
                         <ToggleButton
-                            android:id="@+id/toggleButton"
+                            android:id="@+id/toggleAllDaily"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:textOn="All tasks"
                             android:textOff="Daily tasks"
-                            />
+                            android:textOn="All tasks"
+                            android:checked="true"/>
 
                         <Button
-                        android:id="@+id/showDoneTasks"
-                        android:layout_width="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_height="wrap_content"
-                        android:text="Show done"
-                        />
+                            android:id="@+id/showDoneTasks"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Show done" />
 
                     </LinearLayout>
 
@@ -163,8 +157,7 @@
                         android:background="#D0D0D0"
                         android:gravity="bottom"
                         android:textStyle="italic"
-                        android:visibility="gone"
-                        />
+                        android:visibility="gone" />
 
 
                 </LinearLayout>
@@ -172,18 +165,16 @@
 
 
             <ListView
+                android:id="@+id/listViewTasks"
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
-                android:id="@+id/listViewTasks"
-                android:visibility="gone"
-                />
+                android:visibility="gone" />
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:scrollbars="vertical"
-                />
+                android:scrollbars="vertical" />
 
 
         </LinearLayout>
@@ -191,90 +182,79 @@
     </ScrollView>
 
     <RelativeLayout
+        android:id="@+id/relativeLayoutBottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/relativeLayoutBottom"
-        android:visibility="gone"
         android:layout_alignParentBottom="true"
         android:layout_weight="0.5"
         android:background="@drawable/lightGray"
-        >
+        android:visibility="gone">
 
-                    <EditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/editTextView"
-                        android:visibility="visible"
-                        android:gravity="top"
-                        android:textColor="#FFF"
-                        />
+        <EditText
+            android:id="@+id/editTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top"
+            android:textColor="#FFF"
+            android:visibility="visible" />
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="bottom|center"
-                        android:orientation="horizontal"
-                        android:id="@+id/editTextWithButton"
-                        android:visibility="visible"
-                        android:layout_below="@+id/editTextView"
+        <LinearLayout
+            android:id="@+id/editTextWithButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/editTextView"
+            android:layout_gravity="bottom|center"
+            android:orientation="horizontal"
+            android:visibility="visible">
 
-                        >
+            <Button
+                android:id="@+id/renameTaskButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:text="Rename" />
 
-                        <Button
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/renameTaskButton"
-                            android:text="Rename"
-                            android:layout_alignParentRight="true"
-                            />
+            <Button
+                android:id="@+id/cancelRenameTaskButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:text="Cancel" />
 
-                        <Button
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/cancelRenameTaskButton"
-                            android:text="Cancel"
-                            android:layout_alignParentRight="true"
-                            />
+        </LinearLayout>
 
-                    </LinearLayout>
+        <LinearLayout
+            android:id="@+id/bottomButtons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone">
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:id="@+id/bottomButtons"
-                            android:visibility="gone"
-                            >
+            <Button
+                android:id="@+id/buttonEdit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Edit" />
 
-                            <Button
-                                android:id="@+id/buttonEdit"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Edit" />
+            <Button
+                android:id="@+id/buttonRemove"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="remove" />
 
+            <Button
+                android:id="@+id/buttonEditDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Date" />
 
-                            <Button
-                                android:id="@+id/buttonRemove"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="remove"
-                                />
+            <Button
+                android:id="@+id/buttonHide"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="hide" />
 
-                            <Button
-                                android:id="@+id/buttonEditDate"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Date"
-                                />
-
-                                <Button
-                                    android:id="@+id/buttonHide"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="hide"
-                                    />
-
-                        </LinearLayout>
+        </LinearLayout>
     </RelativeLayout>
 </LinearLayout>
 
