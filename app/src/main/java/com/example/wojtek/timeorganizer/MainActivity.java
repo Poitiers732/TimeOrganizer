@@ -16,9 +16,6 @@ public class MainActivity extends AppCompatActivity {
     DateFormat df = new SimpleDateFormat("EEE, d MMM yyyy, HH:mm");
     String today = df.format(Calendar.getInstance().getTime());
 
-    DBAdapter myDB;
-    EditText etTasks;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,21 +28,6 @@ public class MainActivity extends AppCompatActivity {
             startActivity(i);
         }
 
-        if(v.getId() == R.id.mealsButton){
-            Intent i = new Intent(MainActivity.this,Meals.class);
-            startActivity(i);
-        }
-
-        if(v.getId() == R.id.trainingButton){
-            Intent i = new Intent(MainActivity.this,Training.class);
-            startActivity(i);
-        }
-
-        if(v.getId() == R.id.closeButton){
-            Intent intent = new Intent(Intent.ACTION_MAIN);
-            intent.addCategory(Intent.CATEGORY_HOME);
-            startActivity(intent);
-        }
     }
 
     @Override

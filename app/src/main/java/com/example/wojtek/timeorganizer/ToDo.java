@@ -515,6 +515,7 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
         widget.clearSelection();
         widget.setDateSelected(calendar.getTime(), true);
         textViewDate.setText(getSelectedDatesString());
+        populateRecycleList(itemList, itemArrayAdapterGlobal);
         populateList();
     }
 
@@ -534,7 +535,7 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
         }
     }
 
-    private void populateRecycleList(final ArrayList<Item> itemList, final ItemArrayAdapter itemArrayAdapter){
+    private ItemArrayAdapter populateRecycleList(final ArrayList<Item> itemList, final ItemArrayAdapter itemArrayAdapter){
 
         Cursor cursor;
 
@@ -559,20 +560,7 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
             itemList.add( new Item( cursor.getString( 1 ), cursor.getString( 2 ), cursor.getString( 0 ) ));
         }
 
-   /*     String[] fromFieldNames = new String[] {DBAdapter.KEY_ROWID,DBAdapter.KEY_TASK,DBAdapter.KEY_DATE,DBAdapter.KEY_ISDONE};
-        int[] toViewIDs = new int[] {R.id.itemNumberTextView,R.id.taskTextView,R.id.dateTextView,R.id.isdoneTextView};
-
-        SimpleCursorAdapter myCursorAdapter;
-        myCursorAdapter = new SimpleCursorAdapter(getBaseContext(),R.layout.list_item, cursor, fromFieldNames, toViewIDs,0);
-        ListView myList = (ListView) findViewById(R.id.listViewTasks);
-        myList.setAdapter(myCursorAdapter);*/
-
-
-    /*    // Populating list items
-        for(int i=0; i<numberOfrows; i++) {
-            itemList.add(new Item( my ));
-        }*/
-
+        return itemArrayAdapter;
     }
 
     private void populateList(){
