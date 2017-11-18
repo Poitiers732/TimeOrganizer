@@ -15,7 +15,6 @@ import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -29,30 +28,30 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.prolificinteractive.materialcalendarview.CalendarDay;
+import com.prolificinteractive.materialcalendarview.DayViewDecorator;
+import com.prolificinteractive.materialcalendarview.DayViewFacade;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 import com.prolificinteractive.materialcalendarview.OnMonthChangedListener;
+import com.prolificinteractive.materialcalendarview.spans.DotSpan;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-
-/**
- * Created by Wojtek on 21.09.2017.
- */
-
 public class ToDo extends AppCompatActivity implements OnDateSelectedListener, OnMonthChangedListener {
 
     private static final DateFormat FORMATTER = SimpleDateFormat.getDateInstance();
 
-    //SQL
     DBAdapter myDB;
 
     @BindView(R.id.calendarView)
@@ -172,6 +171,7 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
 
         openDB();
         populateList();
+        initializeCalendar();
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
@@ -410,6 +410,7 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
                 editTextWithButton.setVisibility(View.GONE);
 
                 hideKeyboard();
+                initializeCalendar();
             }
         });
 
@@ -440,6 +441,7 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
                 populateRecycleList(itemList, itemArrayAdapter);
                 relativeLayoutBottom.setVisibility(View.GONE);
                 editTextWithButton.setVisibility(View.GONE);
+                initializeCalendar();
             }
         });
 
@@ -470,6 +472,63 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
         });
 }
 
+// need improvement, dateformat change insted of ifs
+    private void initializeCalendar() {
+
+        Cursor cursor;
+        cursor = myDB.getAllRows();
+        List<CalendarDay> list = new ArrayList<>();
+
+        Calendar calendar = Calendar.getInstance();
+        String[] arr;
+
+        for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+            arr = cursor.getString(2).split(" ");
+
+            if(arr[1].equals("Jan")){ arr[1] = "0"; }
+            if(arr[1].equals("Feb")){ arr[1] = "1"; }
+            if(arr[1].equals("Mar")){ arr[1] = "2"; }
+            if(arr[1].equals("Apr")){ arr[1] = "3"; }
+            if(arr[1].equals("May")){ arr[1] = "4"; }
+            if(arr[1].equals("Jun")){ arr[1] = "5"; }
+            if(arr[1].equals("Jul")){ arr[1] = "6"; }
+            if(arr[1].equals("Aug")){ arr[1] = "7"; }
+            if(arr[1].equals("Sep")){ arr[1] = "8"; }
+            if(arr[1].equals("Nov")){ arr[1] = "9"; }
+            if(arr[1].equals("Oct")){ arr[1] = "10"; }
+            if(arr[1].equals("Dec")){ arr[1] = "11"; }
+
+            calendar.set(Integer.valueOf(arr[2]), 10,Integer.valueOf(arr[0]) );
+            CalendarDay calendarDay = CalendarDay.from(calendar);
+            list.add(calendarDay);
+
+        }
+
+        widget.addDecorators(new EventDecorator(0xFFFFFFFF, list));
+        cursor.close();
+    }
+
+    private class EventDecorator implements DayViewDecorator {
+
+        private final int color;
+        private final HashSet<CalendarDay> dates;
+
+        public EventDecorator(int color, Collection<CalendarDay> dates) {
+            this.color = color;
+            this.dates = new HashSet<>(dates);
+        }
+
+        @Override
+        public boolean shouldDecorate(CalendarDay day) {
+            return dates.contains(day);
+        }
+
+        @Override
+        public void decorate(DayViewFacade view) {
+            view.addSpan(new DotSpan(5, color));
+        }
+    }
+
     @Override
     public void onDateSelected(@NonNull MaterialCalendarView widget, @Nullable CalendarDay date, boolean selected) {
 
@@ -486,6 +545,7 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
         populateList();
         populateRecycleList(itemList, itemArrayAdapterGlobal);
         widget.setVisibility(View.GONE);
+        initializeCalendar();
     }
 
     @Override

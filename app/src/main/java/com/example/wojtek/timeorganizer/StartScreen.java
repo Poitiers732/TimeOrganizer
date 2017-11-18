@@ -24,7 +24,7 @@ public class StartScreen extends AppCompatActivity {
         };
 
         Timer startTime = new Timer();
-        startTime.schedule(task, 15);
+        startTime.schedule(task, 1500);
 
     }
 
