@@ -472,8 +472,10 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
         });
 }
 
-// need improvement, dateformat change insted of ifs
+// need improvement, dateformat change insted of ifs / performace
     private void initializeCalendar() {
+
+        widget.removeDecorators();
 
         Cursor cursor;
         cursor = myDB.getAllRows();
