@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/popUp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/darkGray"
+    android:orientation="vertical"
+    android:padding="15dp"
+    >
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:alpha="1"
+        android:background="@drawable/lightGray"
+        android:padding="15dp">
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:alpha="1"
+            android:text="Swipe tasks left or right to mark it as done"
+            android:textColor="#FFF"
+            android:textSize="20dp" />
+
+        <Button
+            android:id="@+id/gotItButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textView2"
+            android:layout_weight="0.5"
+            android:onClick="dismissPopup"
+            android:layout_centerHorizontal="true"
+            android:text="GOT IT" />
+
+    </RelativeLayout>
+</RelativeLayout>

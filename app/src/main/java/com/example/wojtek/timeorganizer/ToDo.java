@@ -3,6 +3,7 @@ package com.example.wojtek.timeorganizer;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -12,7 +13,10 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
@@ -22,6 +26,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -115,8 +120,13 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
     };*/
 
     ArrayAdapter<String> adapter;
-
     RecyclerView recyclerView;
+
+    PopupWindow popupWindow;
+    LayoutInflater popInflater;
+    RelativeLayout todoLayout;
+
+    Button gotItButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -162,10 +172,53 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
         renameTaskButton = (Button)findViewById(R.id.renameTaskButton);
         cancelRenameTaskButton = (Button)findViewById(R.id.cancelRenameTaskButton);
         showDoneTasks = (Button) findViewById(R.id.showDoneTasks);
-
         toggleButton = (ToggleButton) findViewById(R.id.toggleAllDaily);
-
         bottomButtons = (LinearLayout)findViewById(R.id.bottomButtons);
+        todoLayout = (RelativeLayout)findViewById(R.id.todoLayout);
+
+        gotItButton = (Button)findViewById(R.id.gotItButton);
+        ///
+
+
+        LayoutInflater inflater = (LayoutInflater)getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);
+        View customView = inflater.inflate(R.layout.popup,null);
+        popupWindow = new PopupWindow(
+                customView,
+                RelativeLayout.LayoutParams.WRAP_CONTENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT
+        );
+
+            new Handler().postDelayed(new Runnable() {
+            public void run() {
+
+        popupWindow.showAtLocation(todoLayout,Gravity.BOTTOM,0,0);
+            }
+        }, 100);
+
+        ///
+
+      /*  buttonAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LayoutInflater inflater = (LayoutInflater)getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);
+                View customView = inflater.inflate(R.layout.popup,null);
+                popupWindow = new PopupWindow(
+                        customView,
+                        RelativeLayout.LayoutParams.WRAP_CONTENT,
+                        RelativeLayout.LayoutParams.WRAP_CONTENT
+                );
+
+                gotItButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        popupWindow.dismiss();
+                    }
+                });
+                popupWindow.showAtLocation(todoLayout,Gravity.CENTER,0,0);
+
+            }
+
+        });*/
 
         itemList = new ArrayList<Item>();
 
@@ -227,7 +280,6 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
                 return false;
             }
 
-
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
                 //Remove swiped item from list and notify the RecyclerView
@@ -245,7 +297,6 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
                         myDB.updateRowIsDone(longid, "done");
                     }
                     cursor.close();
-
                 }
 
                 if (swipeDir == ItemTouchHelper.LEFT && !myDB.getRow(longid).getString(3).equals("not_done")
@@ -472,7 +523,7 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
         });
 }
 
-// need improvement, dateformat change insted of ifs / performace
+    // need improvement, dateformat change instead of ifs / slower performance
     private void initializeCalendar() {
 
         widget.removeDecorators();
@@ -508,6 +559,10 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
 
         widget.addDecorators(new EventDecorator(0xFFFFFFFF, list));
         cursor.close();
+    }
+
+    public void dismissPopup(View view) {
+        popupWindow.dismiss();
     }
 
     private class EventDecorator implements DayViewDecorator {
