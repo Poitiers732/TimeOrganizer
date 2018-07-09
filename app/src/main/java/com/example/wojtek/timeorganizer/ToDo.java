@@ -534,24 +534,29 @@ public class ToDo extends AppCompatActivity implements OnDateSelectedListener, O
 
         Calendar calendar = Calendar.getInstance();
         String[] arr;
+        String cursorStr;
 
         for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
-            arr = cursor.getString(2).split(" ");
+            cursorStr = cursor.getString(2);
+            cursorStr = cursorStr.replace(",", "");
+            arr = cursorStr.split(" ");
 
-            if(arr[1].equals("Jan")){ arr[1] = "0"; }
-            if(arr[1].equals("Feb")){ arr[1] = "1"; }
-            if(arr[1].equals("Mar")){ arr[1] = "2"; }
-            if(arr[1].equals("Apr")){ arr[1] = "3"; }
-            if(arr[1].equals("May")){ arr[1] = "4"; }
-            if(arr[1].equals("Jun")){ arr[1] = "5"; }
-            if(arr[1].equals("Jul")){ arr[1] = "6"; }
-            if(arr[1].equals("Aug")){ arr[1] = "7"; }
-            if(arr[1].equals("Sep")){ arr[1] = "8"; }
-            if(arr[1].equals("Nov")){ arr[1] = "9"; }
-            if(arr[1].equals("Oct")){ arr[1] = "10"; }
-            if(arr[1].equals("Dec")){ arr[1] = "11"; }
+            System.out.println(arr[0].toString()+ "\t" + arr[1].toString().replace(",","") + "\t" + arr[2].toString());
 
-            calendar.set(Integer.valueOf(arr[2]), 10,Integer.valueOf(arr[0]) );
+            if(arr[0].equals("Jan")){ arr[0] = "0"; }
+            if(arr[0].equals("Feb")){ arr[0] = "1"; }
+            if(arr[0].equals("Mar")){ arr[0] = "2"; }
+            if(arr[0].equals("Apr")){ arr[0] = "3"; }
+            if(arr[0].equals("May")){ arr[0] = "4"; }
+            if(arr[0].equals("Jun")){ arr[0] = "5"; }
+            if(arr[0].equals("Jul")){ arr[0] = "6"; }
+            if(arr[0].equals("Aug")){ arr[0] = "7"; }
+            if(arr[0].equals("Sep")){ arr[0] = "8"; }
+            if(arr[0].equals("Nov")){ arr[0] = "9"; }
+            if(arr[0].equals("Oct")){ arr[0] = "10"; }
+            if(arr[0].equals("Dec")){ arr[0] = "11"; }
+
+            calendar.set( Integer.parseInt(arr[2]), Integer.parseInt(arr[0]), Integer.parseInt(arr[1]));
             CalendarDay calendarDay = CalendarDay.from(calendar);
             list.add(calendarDay);
 
